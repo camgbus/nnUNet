@@ -23,7 +23,11 @@ import os
 
 
 def split_4d_nifti(filename, output_folder):
-    img_itk = sitk.ReadImage(filename)
+    try:
+        img_itk = sitk.ReadImage(filename)
+    except RuntimeError:
+        print('Skipped because file starts wirh ._')
+        return
     dim = img_itk.GetDimension()
     file_base = os.path.split(filename)[1]
     if dim == 3:

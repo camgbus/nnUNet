@@ -15,12 +15,11 @@
 from nnunet.experiment_planning.find_classes_in_slice import add_classes_in_slice_info
 from nnunet.preprocessing.cropping import ImageCropper
 from batchgenerators.utilities.file_and_folder_operations import *
-from nnunet.paths import splitted_4d_output_dir, cropped_output_dir, preprocessing_output_dir, raw_dataset_dir
+from nnunet.paths import base, splitted_4d_output_dir, cropped_output_dir, preprocessing_output_dir, raw_dataset_dir
 import numpy as np
 import pickle
 from nnunet.experiment_planning.DatasetAnalyzer import DatasetAnalyzer
 import os
-os.environ["OMP_NUM_THREADS"] = "1"
 from multiprocessing import Pool
 import json
 import shutil
@@ -166,6 +165,7 @@ def plan_and_preprocess(task_string, processes_lowres=8, processes_fullres=3, no
         p.join()
 
 if __name__ == "__main__":
+    os.environ["OMP_NUM_THREADS"] = "1"
     argv = ['-t', "Task04_Hippocampus"]
     import argparse
     parser = argparse.ArgumentParser()
@@ -240,7 +240,10 @@ if __name__ == "__main__":
         if not use_splitted or not isdir(join(splitted_4d_output_dir, task)):
             print("splitting task ", task)
             split_4d(task)
-
+        os.makedirs(os.path.join(base, 'Splitted'))
         crop(task, override=override, num_threads=processes_lowres)
+        os.makedirs(os.path.join(base, 'Cropped'))
         analyze_dataset(task, override, collect_intensityproperties=True, num_processes=processes_lowres)
+        os.makedirs(os.path.join(base, 'Analyzed'))
         plan_and_preprocess(task, processes_lowres, processes_fullres, no_preprocessing)
+        os.makedirs(os.path.join(base, 'Planned'))
