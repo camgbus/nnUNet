@@ -18,6 +18,7 @@ from batchgenerators.utilities.file_and_folder_operations import *
 from multiprocessing import Pool
 import numpy as np
 from scipy.ndimage import label
+import os
 
 
 def export_segmentations(indir, outdir):
@@ -66,7 +67,7 @@ if __name__ == "__main__":
 
     def load_save_train(args):
         data_file, seg_file = args
-        pat_id = data_file.split("/")[-1]
+        pat_id = os.path.split(data_file)[1]
         pat_id = "train_" + pat_id.split("-")[-1][:-4]
 
         img_itk = sitk.ReadImage(data_file)
@@ -78,7 +79,7 @@ if __name__ == "__main__":
 
     def load_save_test(args):
         data_file = args
-        pat_id = data_file.split("/")[-1]
+        pat_id = os.path.split(data_file)[1]
         pat_id = "test_" + pat_id.split("-")[-1][:-4]
 
         img_itk = sitk.ReadImage(data_file)

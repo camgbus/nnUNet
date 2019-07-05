@@ -20,6 +20,7 @@ from nnunet.inference.segmentation_export import save_segmentation_nifti_from_so
 from batchgenerators.utilities.file_and_folder_operations import *
 from nnunet.paths import network_training_output_dir, preprocessing_output_dir, default_plans_identifier
 import argparse
+import os
 
 
 def merge(args):
@@ -106,8 +107,8 @@ if __name__ == "__main__":
         # now evaluate if all these gt files exist
         aggregate_scores(tuple(zip(out_files, gt_segmentations)), labels=plans['all_classes'],
                          json_output_file=join(output_folder, "summary_allFolds.json"), json_task=task,
-                         json_name=task + "__" + output_folder.split("/")[-1], num_threads=4)
+                         json_name=task + "__" + os.path.split(output_folder)[1], num_threads=4)
         json_out = load_json(join(output_folder, "summary_allFolds.json"))
-        json_out["experiment_name"] = output_folder.split("/")[-1]
+        json_out["experiment_name"] = os.path.split(output_folder)[1]
         save_json(json_out, join(output_folder, "summary_allFolds.json"))
-        shutil.copy(join(output_folder, "summary_allFolds.json"), join(out_dir_all_json, "%s__%s.json" % (task, output_folder.split("/")[-1])))
+        shutil.copy(join(output_folder, "summary_allFolds.json"), join(out_dir_all_json, "%s__%s.json" % (task, os.path.split(output_folder)[1])))

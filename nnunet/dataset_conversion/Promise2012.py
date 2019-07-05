@@ -15,6 +15,7 @@
 from collections import OrderedDict
 import SimpleITK as sitk
 from batchgenerators.utilities.file_and_folder_operations import *
+import os
 
 
 def export_for_submission(source_dir, target_dir):
@@ -44,17 +45,17 @@ if __name__ == "__main__":
     segmentations = subfiles(current_dir, suffix="segmentation.mhd")
     raw_data = [i for i in subfiles(current_dir, suffix="mhd") if not i.endswith("segmentation.mhd")]
     for i in raw_data:
-        out_fname = join(out_folder, "imagesTr", i.split("/")[-1][:-4] + "_0000.nii.gz")
+        out_fname = join(out_folder, "imagesTr", os.path.split(i)[1][:-4] + "_0000.nii.gz")
         sitk.WriteImage(sitk.ReadImage(i), out_fname)
     for i in segmentations:
-        out_fname = join(out_folder, "labelsTr", i.split("/")[-1][:-17] + ".nii.gz")
+        out_fname = join(out_folder, "labelsTr", os.path.split(i)[1][:-17] + ".nii.gz")
         sitk.WriteImage(sitk.ReadImage(i), out_fname)
 
     # test
     current_dir = join(folder, "test")
     test_data = subfiles(current_dir, suffix="mhd")
     for i in test_data:
-        out_fname = join(out_folder, "imagesTs", i.split("/")[-1][:-4] + "_0000.nii.gz")
+        out_fname = join(out_folder, "imagesTs", os.path.split(i)[1][:-4] + "_0000.nii.gz")
         sitk.WriteImage(sitk.ReadImage(i), out_fname)
 
 
@@ -74,9 +75,9 @@ if __name__ == "__main__":
     }
     json_dict['numTraining'] = len(raw_data)
     json_dict['numTest'] = len(test_data)
-    json_dict['training'] = [{'image': "./imagesTr/%s.nii.gz" % i.split("/")[-1][:-4], "label": "./labelsTr/%s.nii.gz" % i.split("/")[-1][:-4]} for i in
+    json_dict['training'] = [{'image': "./imagesTr/%s.nii.gz" % os.path.split(i)[1][:-4], "label": "./labelsTr/%s.nii.gz" % os.path.split(i)[1][:-4]} for i in
                              raw_data]
-    json_dict['test'] = ["./imagesTs/%s.nii.gz" % i.split("/")[-1][:-4] for i in test_data]
+    json_dict['test'] = ["./imagesTs/%s.nii.gz" % os.path.split(i)[1][:-4] for i in test_data]
 
     save_json(json_dict, os.path.join(out_folder, "dataset.json"))
 

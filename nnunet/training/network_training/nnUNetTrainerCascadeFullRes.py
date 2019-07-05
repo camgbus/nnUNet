@@ -12,6 +12,7 @@ import numpy as np
 from nnunet.utilities.one_hot_encoding import to_one_hot
 import shutil
 matplotlib.use("agg")
+import os
 
 
 class nnUNetTrainerCascadeFullRes(nnUNetTrainer):
@@ -193,7 +194,7 @@ class nnUNetTrainerCascadeFullRes(nnUNetTrainer):
                 transpose_backward = self.plans.get('transpose_backward')
                 softmax_pred = softmax_pred.transpose([0] + [i + 1 for i in transpose_backward])
 
-            fname = properties['list_of_data_files'][0].split("/")[-1][:-12]
+            fname = os.path.split(properties['list_of_data_files'][0])[1][:-12]
 
             if save_softmax:
                 softmax_fname = join(output_folder, fname + ".npz")
@@ -222,7 +223,7 @@ class nnUNetTrainerCascadeFullRes(nnUNetTrainer):
 
         _ = [i.get() for i in results]
 
-        task = self.dataset_directory.split("/")[-1]
+        task = os.path.split(self.dataset_directory)[1]
         job_name = self.experiment_name
         _ = aggregate_scores(pred_gt_tuples, labels=list(range(self.num_classes)),
                              json_output_file=join(output_folder, "summary.json"), json_name=job_name,

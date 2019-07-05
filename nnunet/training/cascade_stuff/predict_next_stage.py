@@ -23,6 +23,7 @@ from multiprocessing import Pool
 
 from nnunet.training.model_restore import recursive_find_trainer
 from nnunet.training.network_training.nnUNetTrainer import nnUNetTrainer
+import os
 
 
 def resample_and_save(predicted, target_shape, output_file):
@@ -45,11 +46,11 @@ def predict_next_stage(trainer, stage_to_be_predicted_folder):
         predicted = trainer.predict_preprocessed_data_return_softmax(data_preprocessed, True, 1, False, 1,
                                                                      trainer.data_aug_params['mirror_axes'],
                                                                      True, True, 2, trainer.patch_size, True)
-        data_file_nofolder = data_file.split("/")[-1]
+        data_file_nofolder = os.path.split(data_file)[1]
         data_file_nextstage = join(stage_to_be_predicted_folder, data_file_nofolder)
         data_nextstage = np.load(data_file_nextstage)['data']
         target_shp = data_nextstage.shape[1:]
-        output_file = join(output_folder, data_file_nextstage.split("/")[-1][:-4] + "_segFromPrevStage.npz")
+        output_file = join(output_folder, os.path.split(data_file_nextstage)[1][:-4] + "_segFromPrevStage.npz")
         results.append(process_manager.starmap_async(resample_and_save, [(predicted, target_shp, output_file)]))
 
     _ = [i.get() for i in results]

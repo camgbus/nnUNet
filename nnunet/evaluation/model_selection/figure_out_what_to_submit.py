@@ -20,6 +20,7 @@ from nnunet.evaluation.add_mean_dice_to_json import foreground_mean
 from subprocess import call
 import SimpleITK as sitk
 from nnunet.run.default_configuration import get_output_folder
+import os
 
 
 def copy_nifti_and_convert_to_uint8(args):
@@ -56,20 +57,20 @@ if __name__ == "__main__":
     for t in tasks:
         json_files_task = [i for i in subfiles(out_dir_all_json, prefix="Task%02.0d_" % t) if i.find("ensemble") == -1]
         if len(json_files_task) > 0:
-            task_name = json_files_task[0].split("/")[-1].split("__")[0]
+            task_name = os.path.split(json_files_task[0])[1].split("__")[0]
             print(task_name)
 
             for i in range(len(json_files_task) - 1):
                 for j in range(i+1, len(json_files_task)):
                     # networks are stored as
                     # task__configuration__trainer__plans
-                    network1 = json_files_task[i].split("/")[-1].split("__")
+                    network1 = os.path.split(json_files_task[i])[1].split("__")
                     network1[-1] = network1[-1].split(".")[0]
                     task, configuration, trainer, plans_identifier = network1
                     network1_folder = get_output_folder(configuration, task, trainer, plans_identifier)
                     name1 = configuration + "__" + trainer + "__" + plans_identifier
 
-                    network2 = json_files_task[j].split("/")[-1].split("__")
+                    network2 = os.path.split(json_files_task[j])[1].split("__")
                     network2[-1] = network2[-1].split(".")[0]
                     task, configuration, trainer, plans_identifier = network2
                     network2_folder = get_output_folder(configuration, task, trainer, plans_identifier)
@@ -96,14 +97,14 @@ if __name__ == "__main__":
         for t in tasks:
             json_files_task = subfiles(out_dir_all_json, prefix="Task%02.0d_" % t)
             if len(json_files_task) > 0:
-                task_name = json_files_task[0].split("/")[-1].split("__")[0]
+                task_name = os.path.split(json_files_task[0])[1].split("__")[0]
                 print(task_name)
                 mean_dice = []
                 for j in json_files_task:
                     js = load_json(j)
                     mean_dice.append(js['results']['mean']['mean']['Dice'])
                 best = np.argsort(mean_dice)[::-1][0]
-                j = json_files_task[best].split("/")[-1]
+                j = os.path.split(json_files_task[best])[1]
 
                 print("%s: submit model %s" % (task_name, j))
                 f.write("%s,%s\n" % (task_name, j))

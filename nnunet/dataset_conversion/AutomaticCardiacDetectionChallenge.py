@@ -15,6 +15,7 @@
 from collections import OrderedDict
 from batchgenerators.utilities.file_and_folder_operations import *
 import shutil
+import os
 
 
 def convert_to_submission(source_dir, target_dir):
@@ -47,7 +48,7 @@ if __name__ == "__main__":
         data_files_train = [i for i in subfiles(current_dir, suffix=".nii.gz") if i.find("_gt") == -1 and i.find("_4d") == -1]
         corresponding_seg_files = [i[:-7] + "_gt.nii.gz" for i in data_files_train]
         for d, s in zip(data_files_train, corresponding_seg_files):
-            patient_identifier = d.split("/")[-1][:-7]
+            patient_identifier = os.path.split(d)[1][:-7]
             all_train_files.append(patient_identifier + "_0000.nii.gz")
             shutil.copy(d, join(out_folder, "imagesTr", patient_identifier + "_0000.nii.gz"))
             shutil.copy(s, join(out_folder, "labelsTr", patient_identifier + ".nii.gz"))
@@ -59,7 +60,7 @@ if __name__ == "__main__":
         current_dir = p
         data_files_test = [i for i in subfiles(current_dir, suffix=".nii.gz") if i.find("_gt") == -1 and i.find("_4d") == -1]
         for d in data_files_test:
-            patient_identifier = d.split("/")[-1][:-7]
+            patient_identifier = os.path.split(d)[1][:-7]
             all_test_files.append(patient_identifier + "_0000.nii.gz")
             shutil.copy(d, join(out_folder, "imagesTs", patient_identifier + "_0000.nii.gz"))
 
@@ -82,9 +83,9 @@ if __name__ == "__main__":
     }
     json_dict['numTraining'] = len(all_train_files)
     json_dict['numTest'] = len(all_test_files)
-    json_dict['training'] = [{'image': "./imagesTr/%s.nii.gz" % i.split("/")[-1][:-12], "label": "./labelsTr/%s.nii.gz" % i.split("/")[-1][:-12]} for i in
+    json_dict['training'] = [{'image': "./imagesTr/%s.nii.gz" % os.path.split(i)[1][:-12], "label": "./labelsTr/%s.nii.gz" % os.path.split(i)[1][:-12]} for i in
                              all_train_files]
-    json_dict['test'] = ["./imagesTs/%s.nii.gz" % i.split("/")[-1][:-12] for i in all_test_files]
+    json_dict['test'] = ["./imagesTs/%s.nii.gz" % os.path.split(i)[1][:-12] for i in all_test_files]
 
     save_json(json_dict, os.path.join(out_folder, "dataset.json"))
 

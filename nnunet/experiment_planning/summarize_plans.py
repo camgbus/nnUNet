@@ -14,6 +14,7 @@
 
 from batchgenerators.utilities.file_and_folder_operations import *
 from nnunet.paths import preprocessing_output_dir
+import os
 
 
 # This file is intended to double check nnUNets design choices. It is intended to be used for developent purposes only
@@ -44,7 +45,7 @@ def write_plans_to_file(f, plans_file):
         median_patient_size_in_mm = [i * j for i, j in zip(a['plans_per_stage'][stages[stage]]['median_patient_size_in_voxels'],
                                                   a['plans_per_stage'][stages[stage]]['current_spacing'])]
         f.write(plans_file.split("/")[-2])
-        f.write(";%s" % plans_file.split("/")[-1])
+        f.write(";%s" % os.path.split(plans_file)[1])
         f.write(";%d" % stage)
         f.write(";%s" % str(a['plans_per_stage'][stages[stage]]['batch_size']))
         f.write(";%s" % str(a['plans_per_stage'][stages[stage]]['num_pool_per_axis']))

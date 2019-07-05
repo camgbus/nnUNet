@@ -21,6 +21,7 @@ from nnunet.evaluation.metrics import ConfusionMatrix
 
 matplotlib.use("agg")
 from collections import OrderedDict
+import os
 
 
 class nnUNetTrainer(NetworkTrainer):
@@ -450,7 +451,7 @@ class nnUNetTrainer(NetworkTrainer):
         for k in self.dataset_val.keys():
             print(k)
             properties = self.dataset[k]['properties']
-            fname = properties['list_of_data_files'][0].split("/")[-1][:-12]
+            fname = os.path.split(properties['list_of_data_files'][0])[1][:-12]
             if override or (not isfile(join(output_folder, fname + ".nii.gz"))):
                 data = np.load(self.dataset[k]['data_file'])['data']
 
@@ -516,7 +517,7 @@ class nnUNetTrainer(NetworkTrainer):
         _ = [i.get() for i in results]
         print("finished prediction, now evaluating...")
 
-        task = self.dataset_directory.split("/")[-1]
+        task = os.path.split(self.dataset_directory)[1]
         job_name = self.experiment_name
         _ = aggregate_scores(pred_gt_tuples, labels=list(range(self.num_classes)),
                              json_output_file=join(output_folder, "summary.json"),

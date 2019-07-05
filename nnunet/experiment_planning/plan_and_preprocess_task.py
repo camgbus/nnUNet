@@ -20,6 +20,7 @@ import numpy as np
 import pickle
 from nnunet.experiment_planning.DatasetAnalyzer import DatasetAnalyzer
 import os
+os.environ["OMP_NUM_THREADS"] = "1"
 from multiprocessing import Pool
 import json
 import shutil
@@ -68,9 +69,9 @@ def create_lists_from_splitted_dataset(base_folder_splitted):
     for tr in training_files:
         cur_pat = []
         for mod in range(num_modalities):
-            cur_pat.append(join(base_folder_splitted, "imagesTr", tr['image'].split("/")[-1][:-7] +
+            cur_pat.append(join(base_folder_splitted, "imagesTr", os.path.split(tr['image'])[1][:-7] +
                                 "_%04.0d.nii.gz" % mod))
-        cur_pat.append(join(base_folder_splitted, "labelsTr", tr['label'].split("/")[-1]))
+        cur_pat.append(join(base_folder_splitted, "labelsTr", os.path.split(tr['label'])[1]))
         lists.append(cur_pat)
     return lists, {int(i): d['modality'][str(i)] for i in d['modality'].keys()}
 
@@ -149,9 +150,9 @@ def plan_and_preprocess(task_string, processes_lowres=8, processes_fullres=3, no
         # if there is more than one my_data_identifier (different brnaches) then this code will run for all of them if
         # they start with the same string. not problematic, but not pretty
         stages = [i for i in subdirs(preprocessing_output_dir_this_task_train, join=True, sort=True)
-                  if i.split("/")[-1].find("stage") != -1]
+                  if os.path.split(i)[1].find("stage") != -1]  
         for s in stages:
-            print(s.split("/")[-1])
+            print(os.path.split(s)[1])
             list_of_npz_files = subfiles(s, True, None, ".npz", True)
             list_of_pkl_files = [i[:-4]+".pkl" for i in list_of_npz_files]
             all_classes = []
@@ -163,7 +164,6 @@ def plan_and_preprocess(task_string, processes_lowres=8, processes_fullres=3, no
             p.map(add_classes_in_slice_info, zip(list_of_npz_files, list_of_pkl_files, all_classes))
         p.close()
         p.join()
-
 
 if __name__ == "__main__":
     import argparse
