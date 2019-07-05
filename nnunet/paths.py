@@ -19,7 +19,9 @@ import os
 from batchgenerators.utilities.file_and_folder_operations import maybe_mkdir_p, join
 
 # You need to set the following folders: base, preprocessing_output_dir and network_training_output_dir. See below for details.
-
+os.environ['nnUNet_base'] = 'base'
+os.environ['nnUNet_preprocessed'] = 'preprocessing_output_dir'
+os.environ['RESULTS_FOLDER'] = 'RESULTS_FOLDER'
 
 # do not modify these unless you know what you are doing
 my_output_identifier = "nnUNet"
