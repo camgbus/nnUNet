@@ -17,7 +17,7 @@ Put your personal paths in here. This file will shortly be added to gitignore so
 """
 import os
 from batchgenerators.utilities.file_and_folder_operations import maybe_mkdir_p, join
-
+ 
 # You need to set the following folders: base, preprocessing_output_dir and network_training_output_dir. See below for details.
 os.environ['nnUNet_base'] = 'base'
 os.environ['nnUNet_preprocessed'] = 'preprocessing_output_dir'

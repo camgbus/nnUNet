@@ -13,7 +13,7 @@ from nnunet.utilities.one_hot_encoding import to_one_hot
 import shutil
 matplotlib.use("agg")
 import os
-
+from nnunet.utilities.windows_utilities import split_path
 
 class nnUNetTrainerCascadeFullRes(nnUNetTrainer):
     def __init__(self, plans_file, fold, output_folder=None, dataset_directory=None, batch_dice=True, stage=None,
@@ -24,9 +24,8 @@ class nnUNetTrainerCascadeFullRes(nnUNetTrainer):
                           deterministic, previous_trainer, fp16)
 
         if self.output_folder is not None:
-            task = self.output_folder.split("/")[-3]
-            plans_identifier = self.output_folder.split("/")[-2].split("__")[-1]
-
+            task = split_path(self.output_folder)[-3]
+            plans_identifier = split_path(self.output_folder)[-2].split("__")[-1]
             folder_with_segs_prev_stage = join(network_training_output_dir, "3d_lowres",
                                                task, previous_trainer + "__" + plans_identifier, "pred_next_stage")
             if not isdir(folder_with_segs_prev_stage):

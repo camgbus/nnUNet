@@ -18,7 +18,7 @@ from nnunet.evaluation.model_selection.summarize_results_in_one_json import summ
 from nnunet.paths import network_training_output_dir
 import numpy as np
 import os
-
+from nnunet.utilities.windows_utilities import split_path
 
 def list_to_string(l, delim=","):
     st = "%03.3f" % l[0]
@@ -36,7 +36,7 @@ def write_plans_to_file(f, plans_file, stage=0, do_linebreak_at_end=True, overri
     median_patient_size_in_mm = [i * j for i, j in zip(a['plans_per_stage'][stages[stage]]['median_patient_size_in_voxels'],
                                               a['plans_per_stage'][stages[stage]]['current_spacing'])]
     if override_name is None:
-        f.write(plans_file.split("/")[-2] + "__" + os.path.split(plans_file)[1])
+        f.write(split_path(plans_file)[-2] + "__" + os.path.split(plans_file)[1])
     else:
         f.write(override_name)
     f.write(";%d" % stage)

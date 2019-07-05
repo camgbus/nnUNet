@@ -18,17 +18,14 @@ from batchgenerators.utilities.file_and_folder_operations import *
 from nnunet.experiment_planning.summarize_plans import summarize_plans
 from nnunet.training.model_restore import recursive_find_trainer
 
-
 def get_configuration_from_output_folder(folder):
     # split off network_training_output_dir
-    folder = folder[len(network_training_output_dir):]
-    if folder.startswith("/"):
-        folder = folder[1:]
-
-    configuration, task, trainer_and_plans_identifier = folder.split("/")
+    output_dir = split_path(network_training_output_dir)
+    folder = split_path(folder)
+    folder = folder[len(output_dir):]
+    configuration, task, trainer_and_plans_identifier = folder
     trainer, plans_identifier = trainer_and_plans_identifier.split("__")
     return configuration, task, trainer, plans_identifier
-
 
 def get_output_folder(configuration, task, trainer, plans_identifier):
     return join(network_training_output_dir, configuration, task, trainer + "__" + plans_identifier)

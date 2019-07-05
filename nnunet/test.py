@@ -1,7 +1,1 @@
-import nnunet
-
-i = 4
-
-b = 4 + i
-
-print(b)
+from nnunet.paths import network_training_output_dir
