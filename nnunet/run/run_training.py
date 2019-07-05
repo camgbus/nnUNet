@@ -21,6 +21,7 @@ from nnunet.training.network_training.nnUNetTrainer import nnUNetTrainer
 from nnunet.training.network_training.nnUNetTrainerCascadeFullRes import nnUNetTrainerCascadeFullRes
 
 if __name__ == "__main__":
+    os.environ["OMP_NUM_THREADS"] = "1"
     parser = argparse.ArgumentParser()
     parser.add_argument("network")
     parser.add_argument("network_trainer")
@@ -96,10 +97,11 @@ if __name__ == "__main__":
 
     if find_lr:
         trainer.find_lr()
-    else:
+    else: # Here
         if not validation_only:
             if args.continue_training:
                 trainer.load_latest_checkpoint()
+            # Here the training takes place
             trainer.run_training()
         elif not valbest:
             trainer.load_latest_checkpoint(train=False)

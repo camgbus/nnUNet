@@ -23,7 +23,6 @@ import numpy as np
 from batchgenerators.utilities.file_and_folder_operations import join, load_pickle
 from nnunet.experiment_planning.common_utils import get_pool_and_conv_props
 
-
 class ExperimentPlanner2D(ExperimentPlanner):
     def __init__(self, folder_with_cropped_data, preprocessed_output_folder):
         super(ExperimentPlanner2D, self).__init__(folder_with_cropped_data,

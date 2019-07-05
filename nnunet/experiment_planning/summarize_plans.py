@@ -17,7 +17,6 @@ from nnunet.paths import preprocessing_output_dir
 import os
 from nnunet.utilities.windows_utilities import split_path
 
-
 # This file is intended to double check nnUNets design choices. It is intended to be used for developent purposes only
 def summarize_plans(file):
     plans = load_pickle(file)
@@ -34,7 +33,6 @@ def summarize_plans(file):
         print("stage: ", i)
         print(plans['plans_per_stage'][i])
         print("")
-
 
 def write_plans_to_file(f, plans_file):
     a = load_pickle(plans_file)
@@ -60,7 +58,6 @@ def write_plans_to_file(f, plans_file):
         f.write(";%s" % str(a['plans_per_stage'][stages[stage]]['conv_kernel_sizes']))
         f.write(";%s" % str(a['data_identifier']))
         f.write("\n")
-
 
 if __name__ == "__main__":
     base_dir = preprocessing_output_dir
