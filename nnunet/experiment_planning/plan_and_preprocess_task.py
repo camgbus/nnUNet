@@ -166,6 +166,7 @@ def plan_and_preprocess(task_string, processes_lowres=8, processes_fullres=3, no
         p.join()
 
 if __name__ == "__main__":
+    argv = ['-t', "Task04_Hippocampus"]
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--task', type=str, help="task name. There must be a matching folder in "
@@ -193,7 +194,7 @@ if __name__ == "__main__":
                                                                        'experiment planning and not run the '
                                                                        'preprocessing')
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     task = args.task
     processes_lowres = args.processes_lowres
     processes_fullres = args.processes_fullres
